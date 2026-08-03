@@ -76,6 +76,16 @@ alternateConfig:
           from: attributes.container
           to: resource["k8s.conatainer.name"]
 
+        - type: regex_parser
+          parse_from: body
+          regex: '^(?P<timestamp>\S+)\s+(?P<stream>stdout|stderr)\s+(?P<partial>[PF])\s+(?P<message>.*)$'
+
+        - type: move
+          from: attributes.message
+          to: body
+
+          
+
   processors:
     batch: {}
 
