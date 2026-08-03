@@ -63,7 +63,7 @@ alternateConfig:
         # /var/log/pods/<namespace>_<pod>_<uid>/<container>/0.log
         - type: regex_parser
           parse_from: attributes["log.file.path"]
-          regex: '^/var/log/pods/(?P<namespace>[^_]+)_(?P<pod>[^_]+)_[^/]+/'
+          regex: '^/var/log/pods/(?P<namespace>[^_]+)_(?P<pod>[^_]+)_[^/]+/(?P<container>[^/]+)/'
 
         - type: move
           from: attributes.namespace
@@ -72,6 +72,10 @@ alternateConfig:
         - type: move
           from: attributes.pod
           to: resource["k8s.pod.name"]
+
+          - type: move
+          from: attributes.container
+          to: resource["k8s.conatainer.name"]
 
   processors:
     batch: {}
