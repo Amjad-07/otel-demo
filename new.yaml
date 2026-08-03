@@ -141,6 +141,7 @@ alternateConfig:
         receivers:
           - filelog
         processors:
+          - filter/health_logs
           - batch
         exporters:
           - debug
