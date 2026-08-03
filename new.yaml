@@ -1,4 +1,3 @@
-mji8825@cloudshell:~/otel-demo/otel-demo/otel-collector-helm (project-7910093f-7276-4858-97d)$ cat value.yaml 
 mode: daemonset
 
 image:
