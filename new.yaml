@@ -60,6 +60,7 @@ alternateConfig:
       operators:
         # Extract namespace and pod name from:
         # /var/log/pods/<namespace>_<pod>_<uid>/<container>/0.log
+        #by default,if no parse to is mentioned ,it will be in attributes under log records
         - type: regex_parser
           parse_from: attributes["log.file.path"]
           regex: '^/var/log/pods/(?P<namespace>[^_]+)_(?P<pod>[^_]+)_[^/]+/(?P<container>[^/]+)/'
@@ -74,7 +75,7 @@ alternateConfig:
 
         - type: move
           from: attributes.container
-          to: resource["k8s.conatainer.name"]
+          to: resource["k8s.container.name"]
 
         - type: regex_parser
           parse_from: body
@@ -83,6 +84,35 @@ alternateConfig:
         - type: move
           from: attributes.message
           to: body
+
+        #by default,if no parse to is mentioned ,it will be in attributes under  Timestamp which is under log records
+        - type: time_parser
+          id: time-parser-k8s
+          parse_from: attributes.timestamp
+          layout_type: gotime
+          layout: '2006-01-02T15:04:05.999999999Z'
+          on_error: send_quiet
+
+        - type: recombine
+          combine_field: body
+          combine_with: ""
+          is_last_entry: 'attributes.partial == "F"'
+          source_identifier: attributes["log.file.path"]
+
+# INFO(level):     10.74.128.1:49126 - "GET /health HTTP/1.1" 200 OK
+        - type: regex_parser
+          parse_from: body
+          regex: '^(?P<level>[A-Z]+):\s+(?P<message>.*)$'
+
+          #10.74.128.1:49126 - "GET /health HTTP/1.1" 200 OK
+        - type: move
+          from: attributes.message
+          to: body
+
+        - type: severity_parser
+          parse_from: attributes.level
+
+        
 
           
  
