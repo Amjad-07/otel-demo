@@ -1,8 +1,22 @@
+mji8825@cloudshell:~/otel-demo/otel-demo/otel-collector-helm (project-7910093f-7276-4858-97d)$ cat value.yaml 
 mode: daemonset
 
 image:
   repository: otel/opentelemetry-collector-contrib
   tag: 0.108.0
+
+securityContext:
+  runAsUser: 0
+  runAsGroup: 0
+  runAsNonRoot: false
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 300m
+    memory: 256Mi
 
 extraVolumes:
   - name: varlogpods
@@ -24,7 +38,8 @@ extraVolumeMounts:
 
 alternateConfig:
   extensions:
-    health_check: {}
+    health_check:
+      endpoint: ${env:MY_POD_IP}:13133
 
     file_storage:
       directory: /var/lib/otelcol
@@ -34,6 +49,9 @@ alternateConfig:
       include:
         - /var/log/pods/*/*/*.log
 
+      exclude:
+        - /var/log/pods/observability_otel-collector-*/*/*.log
+
       start_at: beginning
 
       storage: file_storage
@@ -41,6 +59,7 @@ alternateConfig:
       include_file_path: true
 
       operators:
+        # Extract namespace and pod name from:
         # /var/log/pods/<namespace>_<pod>_<uid>/<container>/0.log
         - type: regex_parser
           parse_from: attributes["log.file.path"]
@@ -74,12 +93,4 @@ alternateConfig:
           - batch
         exporters:
           - debug
-
-resources:
-  requests:
-    cpu: 100m
-    memory: 128Mi
-
-  limits:
-    cpu: 300m
-    memory: 256Mi
+amji8825@cloudshell:~/otel-demo/otel-demo/otel-collector-helm (project-7910093f-7276-4858-97d)$ 
