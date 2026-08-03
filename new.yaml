@@ -49,7 +49,10 @@ alternateConfig:
         - /var/log/pods/*/*/*.log
 
       exclude:
-        - /var/log/pods/observability_otel-collector-*/*/*.log
+        - /var/log/pods/kube-system_*/*/*.log
+        - /var/log/pods/observability_*/*/*.log
+        - /var/log/pods/istio-system_*/*/*.log
+        - /var/log/pods/linkerd_*/*/*.log
 
       start_at: beginning
 
