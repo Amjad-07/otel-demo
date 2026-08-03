@@ -120,6 +120,11 @@ alternateConfig:
           
  
   processors:
+    filter/health_logs:
+      logs:
+        log_record:
+          - 'IsString(body) and IsMatch(body, "GET .*/health[z/]? HTTP")'
+
     batch: {}
 
   exporters:
