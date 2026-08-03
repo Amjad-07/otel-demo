@@ -73,7 +73,7 @@ alternateConfig:
           from: attributes.pod
           to: resource["k8s.pod.name"]
 
-          - type: move
+        - type: move
           from: attributes.container
           to: resource["k8s.conatainer.name"]
 
@@ -97,4 +97,3 @@ alternateConfig:
           - batch
         exporters:
           - debug
-amji8825@cloudshell:~/otel-demo/otel-demo/otel-collector-helm (project-7910093f-7276-4858-97d)$ 
